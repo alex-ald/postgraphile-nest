@@ -4,6 +4,7 @@
   "description": "",
   "author": "",
   "license": "MIT",
+  "main": "./dist/index.js",
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.json",
