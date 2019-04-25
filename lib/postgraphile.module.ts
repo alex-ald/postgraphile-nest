@@ -4,18 +4,21 @@ import { postgraphql, HttpRequestHandler } from 'postgraphile';
 import { POSTGRAPHILE_MODULE_OPTIONS } from './postgraphile.constants';
 import { PGraphilelModuleAsyncOptions, PGraphileModuleOptions, PGraphileOptionsFactory } from './interfaces/module-options.interface';
 import expressPlayground from 'graphql-playground-middleware-express';
+import { PluginExplorerService } from './services/plugin-explorer.service';
+import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 
-@Module({})
+@Module({
+  providers: [MetadataScanner, PluginExplorerService]
+})
 export class PostGraphileModule implements OnModuleInit {
 
   postgraphile: HttpRequestHandler;
 
   constructor(
       private readonly httpAdapterHost: HttpAdapterHost,
+      private readonly pluginExplorerService: PluginExplorerService,
       @Inject(POSTGRAPHILE_MODULE_OPTIONS) private readonly options: PGraphileModuleOptions,
-  ) {
-
-  }
+  ) {}
 
   static forRoot(options: PGraphileModuleOptions): DynamicModule {
     return {
@@ -73,6 +76,8 @@ export class PostGraphileModule implements OnModuleInit {
   }
 
   onModuleInit() {
+    const values = this.pluginExplorerService.getPlugins();
+
     if (!this.httpAdapterHost) {
     return;
     }
