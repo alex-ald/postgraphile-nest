@@ -1,14 +1,15 @@
 import { SetMetadata } from '@nestjs/common';
-import { ATTACH_PLUGIN_METADATA } from '../postgraphile.constants';
+import { PLUGIN_TYPE_METADATA } from '../postgraphile.constants';
+import { PluginType } from '../enums/plugin-type.enum';
 
-export function AttachPlugin() {
+export function WrapResolverPlugin() {
   return (
     // tslint:disable-next-line:ban-types
     target: object | Function,
     key?: string | symbol,
     descriptor?: any,
   ) => {
-    SetMetadata(ATTACH_PLUGIN_METADATA, true)(
+    SetMetadata(PLUGIN_TYPE_METADATA, PluginType.WRAP_RESOLVER)(
       target,
       key,
       descriptor,

@@ -2,9 +2,11 @@ import { ModulesContainer } from '@nestjs/core';
 import { Module } from '@nestjs/core/injector/module';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { flattenDeep, identity } from 'lodash';
-import { SCHEMA_PLUGINS_METADATA, ATTACH_PLUGIN_METADATA } from '../postgraphile.constants';
+import { SCHEMA_PLUGINS_METADATA, PLUGIN_TYPE_METADATA, PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
 import { Injectable } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { PluginType } from '../enums/plugin-type.enum';
+import { makeAddInflectorsPlugin, makeProcessSchemaPlugin } from 'graphile-utils';
 
 @Injectable()
 export class PluginExplorerService {
@@ -49,7 +51,24 @@ export class PluginExplorerService {
   protected extractPlugins(instance: any, prototype: any, methodName: string) {
     const callback = prototype[methodName];
 
-    const metadata = Reflect.getMetadata(ATTACH_PLUGIN_METADATA, callback);
+    const metadata = Reflect.getMetadata(PLUGIN_TYPE_METADATA, callback) as PluginType;
+    // tslint:disable-next-line: ban-types
+    const method = (instance[methodName] as Function).bind(instance);
+    switch (metadata) {
+      case PluginType.ADD_INFLECTORS:
+        const { inflector, overriteExisting } = Reflect.getMetadata(PLUGIN_DETAILS_METADATA, callback);
+        return makeAddInflectorsPlugin({ [inflector]: method }, overriteExisting);
+      case PluginType.CHANGE_NULLABILITY:
+        // TODO: HANDLE ADDING PLUGIN
+      case PluginType.EXTEND_SCHEMA:
+        // TODO: HANDLE ADDING PLUGIN
+      case PluginType.PROCESS_SCHEMA:
+        return makeProcessSchemaPlugin(method);
+      case PluginType.WRAP_RESOLVER:
+        // TODO: HANDLE ADDING PLUGIN
+      default:
+        return undefined;
+    }
 
     if (metadata) {
       return instance[methodName].call(instance);
