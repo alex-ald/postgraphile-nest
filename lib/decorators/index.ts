@@ -1,4 +1,3 @@
-// export * from './schema-plugins.decorator';
 // export * from './add-inflectors-plugin.decorator';
 export * from './change-nullability.decorator';
 // export * from './extend-schema-plugin.decorator';

@@ -1,10 +1,11 @@
+import { PluginFactory } from './../factories/plugin.factory';
 import { ModulesContainer } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { BaseExplorerService } from './base-explorer.service';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { SCHEMA_TYPE_METADATA, SCHEMA_TYPE_PLUGIN_METADATA, SCHEMA_TYPE_PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
-import { makeChangeNullabilityPlugin, makePluginByCombiningPlugins, makeWrapResolversPlugin } from 'graphile-utils';
+import { makePluginByCombiningPlugins } from 'graphile-utils';
 import { Injectable } from '@nestjs/common';
 import { Plugin } from 'postgraphile';
 
@@ -58,9 +59,6 @@ export class SchemaTypeExplorerService extends  BaseExplorerService {
   protected extractTypePlugins(instance: any, prototype: any, propertyName: string, typeName: string) {
     const callback = prototype[propertyName];
 
-    // tslint:disable-next-line: ban-types
-    // const method = (instance[methodName] as Function).bind(instance);
-
     const metadata = Reflect.getMetadata(
       SCHEMA_TYPE_PLUGIN_METADATA,
       callback,
@@ -71,23 +69,19 @@ export class SchemaTypeExplorerService extends  BaseExplorerService {
     if (metadata === PluginType.CHANGE_NULLABILITY) {
       const { fieldName } = pluginDetails;
 
-      return makeChangeNullabilityPlugin({
-        [typeName]: {
-          [fieldName]: instance[propertyName](),
-        },
-      });
+      return PluginFactory.createChangeNullabilityPlugin(
+        typeName,
+        fieldName,
+        instance[propertyName]());
     } else if (metadata === PluginType.WRAP_RESOLVER) {
       const { fieldName, requirements } = pluginDetails;
 
-      return makeWrapResolversPlugin({
-        [typeName]: {
-          [fieldName]: {
-            requires: requirements,
-            // tslint:disable-next-line:ban-types
-            resolve: (instance[propertyName] as Function).bind(instance),
-          },
-        },
-      });
+      return PluginFactory.createWrapResolverPlugin(
+        typeName,
+        fieldName,
+        requirements,
+        // tslint:disable-next-line:ban-types
+        (instance[propertyName] as Function).bind(instance));
     }
 
     return undefined;
