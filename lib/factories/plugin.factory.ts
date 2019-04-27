@@ -1,6 +1,9 @@
 import { makeChangeNullabilityPlugin, makeWrapResolversPlugin } from 'graphile-utils';
 import { ResolverWrapperRequirements } from '../interfaces/wrap-resolver-requirements.interface';
 
+/**
+ * Factory for easier creation of PostGraphile plugins
+ */
 export class PluginFactory {
 
   public static createChangeNullabilityPlugin(

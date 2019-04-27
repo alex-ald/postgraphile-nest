@@ -2,8 +2,8 @@ import { SetMetadata } from '@nestjs/common';
 import { PLUGIN_TYPE_METADATA, PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
 
-export function AddInflectorsPlugin(inflector: string);
-export function AddInflectorsPlugin(inflector: string, overriteExisting?: boolean) {
+export function AddInflector(inflector: string);
+export function AddInflector(inflector: string, overriteExisting?: boolean) {
   return (
     // tslint:disable-next-line:ban-types
     target: object | Function,
