@@ -4,7 +4,7 @@ import { BaseExplorerService } from './base-explorer.service';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { SCHEMA_TYPE_METADATA, SCHEMA_TYPE_PLUGIN_METADATA, SCHEMA_TYPE_PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
-import { makeChangeNullabilityPlugin, makePluginByCombiningPlugins } from 'graphile-utils';
+import { makeChangeNullabilityPlugin, makePluginByCombiningPlugins, makeWrapResolversPlugin } from 'graphile-utils';
 import { Injectable } from '@nestjs/common';
 import { Plugin } from 'postgraphile';
 
@@ -68,34 +68,28 @@ export class SchemaTypeExplorerService extends  BaseExplorerService {
 
     const pluginDetails = Reflect.getMetadata(SCHEMA_TYPE_PLUGIN_DETAILS_METADATA, callback);
 
-    switch (metadata) {
-      // case PluginType.ADD_INFLECTORS:
-      //   // const { inflector, overriteExisting } = Reflect.getMetadata(
-      //   //   PLUGIN_DETAILS_METADATA,
-      //   //   callback,
-      //   // );
-      //   // return makeAddInflectorsPlugin(
-      //   //   { [inflector]: method },
-      //   //   overriteExisting,
-      //   // );
-      //   return undefined;
-      case PluginType.CHANGE_NULLABILITY:
-        const { fieldName } = pluginDetails;
+    if (metadata === PluginType.CHANGE_NULLABILITY) {
+      const { fieldName } = pluginDetails;
 
-        return makeChangeNullabilityPlugin({
-          [typeName]: {
-            [fieldName]: instance[propertyName](),
+      return makeChangeNullabilityPlugin({
+        [typeName]: {
+          [fieldName]: instance[propertyName](),
+        },
+      });
+    } else if (metadata === PluginType.WRAP_RESOLVER) {
+      const { fieldName, requirements } = pluginDetails;
+
+      return makeWrapResolversPlugin({
+        [typeName]: {
+          [fieldName]: {
+            requires: requirements,
+            // tslint:disable-next-line:ban-types
+            resolve: (instance[propertyName] as Function).bind(instance),
           },
-        });
-      // case PluginType.EXTEND_SCHEMA:
-      //   // return makeExtendSchemaPlugin(method);
-      //   return undefined;
-      // case PluginType.PROCESS_SCHEMA:
-      //   return makeProcessSchemaPlugin(method);
-      // case PluginType.WRAP_RESOLVER:
-      // TODO: HANDLE ADDING PLUGIN
-      default:
-        return undefined;
+        },
+      });
     }
+
+    return undefined;
   }
 }
