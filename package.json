@@ -18,6 +18,7 @@
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
     "@nestjs/platform-express": "^6.0.0",
+    "graphile-utils": "^4.3.1",
     "graphql-playground-middleware-express": "^1.7.12",
     "lodash": "^4.17.11",
     "reflect-metadata": "^0.1.12",
@@ -45,7 +46,6 @@
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
     "postgraphile": "^4.3.3",
-    "graphile-utils": "^4.3.1",
     "reflect-metadata": "^0.1.12"
   },
   "lint-staged": {

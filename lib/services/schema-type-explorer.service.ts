@@ -1,21 +1,14 @@
 import { ModulesContainer } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import {
-  SCHEMA_PLUGINS_METADATA,
-  PLUGIN_TYPE_METADATA,
-} from '../postgraphile.constants';
-import { Injectable } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { PluginType } from '../enums/plugin-type.enum';
 import { BaseExplorerService } from './base-explorer.service';
-import {
-  makeProcessSchemaPlugin,
-  makeChangeNullabilityPlugin,
-} from 'graphile-utils';
-
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { SCHEMA_TYPE_METADATA, SCHEMA_TYPE_PLUGIN_METADATA, SCHEMA_TYPE_PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
+import { PluginType } from '../enums/plugin-type.enum';
+import { makeChangeNullabilityPlugin } from 'graphile-utils';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class PluginExplorerService extends BaseExplorerService {
+export class SchemaTypeExplorerService extends  BaseExplorerService {
   constructor(
     modulesContainer: ModulesContainer,
     metadataScanner: MetadataScanner,
@@ -39,16 +32,17 @@ export class PluginExplorerService extends BaseExplorerService {
     }
 
     const metadata = Reflect.getMetadata(
-      SCHEMA_PLUGINS_METADATA,
+      SCHEMA_TYPE_METADATA,
       instance.constructor,
     );
 
     if (metadata) {
+      const { typeName } = metadata;
       const prototype = Object.getPrototypeOf(instance);
       const plugins = this.metadataScanner.scanFromPrototype(
         instance,
         prototype,
-        methodName => this.extractPlugins(instance, prototype, methodName),
+        methodName => this.extractTypePlugins(instance, prototype, methodName, typeName),
       );
 
       return plugins;
@@ -57,16 +51,18 @@ export class PluginExplorerService extends BaseExplorerService {
     return undefined;
   }
 
-  protected extractPlugins(instance: any, prototype: any, methodName: string) {
-    const callback = prototype[methodName];
+  protected extractTypePlugins(instance: any, prototype: any, propertyName: string, typeName: string) {
+    const callback = prototype[propertyName];
 
     // tslint:disable-next-line: ban-types
-    const method = (instance[methodName] as Function).bind(instance);
+    // const method = (instance[methodName] as Function).bind(instance);
 
     const metadata = Reflect.getMetadata(
-      PLUGIN_TYPE_METADATA,
+      SCHEMA_TYPE_PLUGIN_METADATA,
       callback,
     ) as PluginType;
+
+    const pluginDetails = Reflect.getMetadata(SCHEMA_TYPE_PLUGIN_DETAILS_METADATA, callback);
 
     switch (metadata) {
       // case PluginType.ADD_INFLECTORS:
@@ -79,8 +75,14 @@ export class PluginExplorerService extends BaseExplorerService {
       //   //   overriteExisting,
       //   // );
       //   return undefined;
-      // case PluginType.CHANGE_NULLABILITY:
-      //   return makeChangeNullabilityPlugin(method());
+      case PluginType.CHANGE_NULLABILITY:
+        const { fieldName } = pluginDetails;
+
+        return makeChangeNullabilityPlugin({
+          [typeName]: {
+            [fieldName]: instance[propertyName](),
+          },
+        });
       // case PluginType.EXTEND_SCHEMA:
       //   // return makeExtendSchemaPlugin(method);
       //   return undefined;
@@ -91,11 +93,5 @@ export class PluginExplorerService extends BaseExplorerService {
       default:
         return undefined;
     }
-
-    if (metadata) {
-      return instance[methodName].call(instance);
-    }
-
-    return undefined;
   }
 }

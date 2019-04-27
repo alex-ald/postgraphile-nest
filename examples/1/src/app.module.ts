@@ -7,7 +7,8 @@ import { TestPlugin } from './plugins/test.plugin';
 @Module({
   imports: [
     PostGraphileModule.forRoot({
-      pgConfig: 'postgresql://crtd_graphile:crafteddrone1@localhost/crafteddronedb?sslmode=disable',
+      pgConfig: 'postgresql://alexald@localhost/crafteddronedb?sslmode=disable',
+      schema: 'graphile_test',
       playground: true,
     }),
   ],

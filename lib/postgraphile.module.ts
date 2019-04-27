@@ -6,9 +6,10 @@ import { PGraphilelModuleAsyncOptions, PGraphileModuleOptions, PGraphileOptionsF
 import expressPlayground from 'graphql-playground-middleware-express';
 import { PluginExplorerService } from './services/plugin-explorer.service';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { SchemaTypeExplorerService } from './services/schema-type-explorer.service';
 
 @Module({
-  providers: [MetadataScanner, PluginExplorerService]
+  providers: [MetadataScanner, PluginExplorerService, SchemaTypeExplorerService],
 })
 export class PostGraphileModule implements OnModuleInit {
 
@@ -17,6 +18,7 @@ export class PostGraphileModule implements OnModuleInit {
   constructor(
       private readonly httpAdapterHost: HttpAdapterHost,
       private readonly pluginExplorerService: PluginExplorerService,
+      private readonly schemaTypeExplorerService: SchemaTypeExplorerService,
       @Inject(POSTGRAPHILE_MODULE_OPTIONS) private readonly options: PGraphileModuleOptions,
   ) {}
 
@@ -76,7 +78,7 @@ export class PostGraphileModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    const values = this.pluginExplorerService.getPlugins();
+    const values = this.schemaTypeExplorerService.getPlugins();
 
     if (!this.httpAdapterHost) {
     return;

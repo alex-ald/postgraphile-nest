@@ -1,15 +1,14 @@
 import { SetMetadata } from '@nestjs/common';
-import { PLUGIN_TYPE_METADATA } from '../postgraphile.constants';
-import { PluginType } from '../enums/plugin-type.enum';
+import { SCHEMA_TYPE_METADATA } from '../postgraphile.constants';
 
-export function ChangeNullabilityPlugin() {
+export function SchemaType(typeName: string) {
   return (
     // tslint:disable-next-line:ban-types
     target: object | Function,
     key?: string | symbol,
     descriptor?: any,
   ) => {
-    SetMetadata(PLUGIN_TYPE_METADATA, PluginType.CHANGE_NULLABILITY)(
+    SetMetadata(SCHEMA_TYPE_METADATA, { typeName })(
       target,
       key,
       descriptor,
