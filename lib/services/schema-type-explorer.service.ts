@@ -4,27 +4,31 @@ import { BaseExplorerService } from './base-explorer.service';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { SCHEMA_TYPE_METADATA, SCHEMA_TYPE_PLUGIN_METADATA, SCHEMA_TYPE_PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
-import { makeChangeNullabilityPlugin } from 'graphile-utils';
+import { makeChangeNullabilityPlugin, makePluginByCombiningPlugins } from 'graphile-utils';
 import { Injectable } from '@nestjs/common';
+import { Plugin } from 'postgraphile';
 
 @Injectable()
 export class SchemaTypeExplorerService extends  BaseExplorerService {
+
   constructor(
     modulesContainer: ModulesContainer,
-    metadataScanner: MetadataScanner,
+    private readonly metadataScanner: MetadataScanner,
   ) {
-    super(modulesContainer, metadataScanner);
+    super(modulesContainer);
   }
 
-  public getPlugins() {
+  public getCombinedPlugin() {
     const modules = this.getModules();
 
-    return this.evaluateModules(modules, instance =>
+    const plugins: Plugin[] =  this.evaluateModules(modules, instance =>
       this.filterAttachPlugins(instance),
     );
+
+    return makePluginByCombiningPlugins(...plugins);
   }
 
-  protected filterAttachPlugins(wrapper: InstanceWrapper) {
+  protected filterAttachPlugins(wrapper: InstanceWrapper): Plugin[] {
     const { instance } = wrapper;
 
     if (!instance) {

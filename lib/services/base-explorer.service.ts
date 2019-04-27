@@ -20,7 +20,6 @@ import {
 export abstract class BaseExplorerService {
   constructor(
     protected readonly modulesContainer: ModulesContainer,
-    protected readonly metadataScanner: MetadataScanner,
   ) {}
 
   protected evaluateModules(

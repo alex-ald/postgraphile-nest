@@ -78,8 +78,6 @@ export class PostGraphileModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    const values = this.schemaTypeExplorerService.getPlugins();
-
     if (!this.httpAdapterHost) {
     return;
     }
@@ -94,10 +92,18 @@ export class PostGraphileModule implements OnModuleInit {
     // Break out PostGraphile options
     const {pgConfig, schema, playground, ...postGraphileOptions} = this.options;
 
+    const { appendPlugins = [] } = postGraphileOptions;
+    const accumulatedPlugin = this.schemaTypeExplorerService.getCombinedPlugin();
+
+    const updatedPostGraphileOptions = {
+      ...postGraphileOptions,
+      appendPlugins: [...appendPlugins, accumulatedPlugin],
+    };
+
     if (schema) {
-      this.postgraphile = postgraphql(pgConfig, schema, postGraphileOptions);
+      this.postgraphile = postgraphql(pgConfig, schema, updatedPostGraphileOptions);
     } else {
-      this.postgraphile = postgraphql(pgConfig, postGraphileOptions);
+      this.postgraphile = postgraphql(pgConfig, updatedPostGraphileOptions);
     }
 
     app.use(this.postgraphile);
