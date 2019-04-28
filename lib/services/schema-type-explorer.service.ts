@@ -75,7 +75,7 @@ export class SchemaTypeExplorerService extends  BaseExplorerService {
         fieldName,
         instance[methodName]());
     } else if (metadata === PluginType.WRAP_RESOLVER) {
-      const { fieldName, requirements } = pluginDetails;
+      const { fieldName, ...requirements } = pluginDetails;
 
       return PluginFactory.createWrapResolverPlugin(
         typeName,

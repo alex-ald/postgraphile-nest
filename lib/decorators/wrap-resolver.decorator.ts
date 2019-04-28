@@ -4,28 +4,22 @@ import {
   PLUGIN_DETAILS_METADATA,
 } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
-import { ResolverWrapperRequirements } from '../interfaces/wrap-resolver-requirements.interface';
+import { WrapResolverOptions } from '../interfaces/wrap-resolver-options.interface';
 
-export function WrapResolver(fieldName: string);
-export function WrapResolver(
-  fieldName: string,
-  requirements?: ResolverWrapperRequirements,
-) {
+export function WrapResolver(options: WrapResolverOptions) {
   return (
     // tslint:disable-next-line:ban-types
     target: object | Function,
     propertyKey?: string,
     descriptor?: any,
   ) => {
-    fieldName = fieldName || propertyKey;
-
     SetMetadata(SCHEMA_TYPE_PLUGIN_METADATA, PluginType.WRAP_RESOLVER)(
       target,
       propertyKey,
       descriptor,
     );
 
-    SetMetadata(PLUGIN_DETAILS_METADATA, { fieldName, requirements })(
+    SetMetadata(PLUGIN_DETAILS_METADATA, options)(
       target,
       propertyKey,
       descriptor,

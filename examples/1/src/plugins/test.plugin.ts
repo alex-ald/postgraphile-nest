@@ -1,15 +1,15 @@
-import { ChangeNullability, SchemaType, WrapResolver } from 'postgraphile-nest';
+import { ChangeNullability, SchemaType, WrapResolver, ExtendSchema } from 'postgraphile-nest';
 import { makeExtendSchemaPlugin, gql } from 'graphile-utils';
 
 @SchemaType('User')
 export class TestPlugin {
 
-  @ChangeNullability()
+  @ChangeNullability({ fieldName: 'name'})
   public name() {
     return true;
   }
 
-  @WrapResolver('name', { siblingColumns: [{ column: 'desription', alias: '$desription' }] })
+  @WrapResolver({ fieldName: 'name', siblingColumns: [{ column: 'desription', alias: '$desription' }] })
   public alterName(resolver, user, args, context) {
     const result = resolver() as string;
 
@@ -18,5 +18,10 @@ export class TestPlugin {
     } else {
       return result;
     }
+  }
+
+  @ExtendSchema({ fieldName: 'testField', fieldType: 'String' })
+  public testField(_query, args, context, resolveInfo, build) {
+    return 'TestField-Value';
   }
 }

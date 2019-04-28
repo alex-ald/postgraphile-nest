@@ -42,7 +42,7 @@ export class PluginFactory {
     fieldType: string,
     // tslint:disable-next-line:ban-types
     resolver: Function,
-    additionalGraphql?: any,
+    additionalGraphql = '',
   ) {
     return makeExtendSchemaPlugin(build => {
       return {
