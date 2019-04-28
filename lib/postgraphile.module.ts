@@ -103,16 +103,23 @@ export class PostGraphileModule implements OnModuleInit {
       appendPlugins: [accumulatedSchemaTypePlugin, accumulatedPlugin, ...appendPlugins],
     };
 
-    if (schema) {
-      this.postgraphile = postgraphql(pgConfig, schema, updatedPostGraphileOptions);
-    } else {
-      this.postgraphile = postgraphql(pgConfig, updatedPostGraphileOptions);
-    }
+    this.postgraphile = this.createPostGraphql(pgConfig, schema, updatedPostGraphileOptions);
 
     app.use(this.postgraphile);
 
     if (playground) {
       app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
+    }
+  }
+
+  /**
+   * Creates PostGraphile server
+   */
+  private createPostGraphql(pgConfig, schema, options) {
+    if (schema) {
+      return  postgraphql(pgConfig, schema, options);
+    } else {
+      return postgraphql(pgConfig, options);
     }
   }
 }

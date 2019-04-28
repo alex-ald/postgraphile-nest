@@ -3,5 +3,9 @@ module.exports = {
   testEnvironment: 'node',
   roots: [
     "<rootDir>/tests"
+  ],
+  collectCoverageFrom: [
+    "<rootDir>/lib/**/*.ts",
+    "!<rootDir>/tests/helpers/**/*.ts",
   ]
 };

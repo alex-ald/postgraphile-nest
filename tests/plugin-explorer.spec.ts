@@ -3,35 +3,8 @@ import * as sinon from 'sinon';
 import { PluginType } from '../lib/enums/plugin-type.enum';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { PluginExplorerService } from '../lib/services/plugin-explorer.service';
-import { Injectable } from '@nestjs/common';
-import { AddInflector } from '../lib/decorators/add-inflector-plugin.decorator';
-import { ProcessSchema } from '../lib/decorators/process-schema-plugin.decorator';
-import { WrapResolverFilter } from '../lib/decorators/wrap-resolver-filter.decorator';
-import { ExtendSchema } from '../lib/decorators/extend-schema.decorator';
-
-@Injectable()
-class TestPlugin {
-
-  @AddInflector({ inflector: 'patchType' })
-  public patchTypeInflector(typeName: string) {
-    return `${typeName}-change-set`.toUpperCase();
-  }
-
-  @ProcessSchema()
-  public nameResolver(schema: any) {
-    return 'test';
-  }
-
-  @WrapResolverFilter()
-  public resolverFilter() {
-    return 'test';
-  }
-
-  @ExtendSchema({ typeName: 'User', fieldName: 'name', fieldType: 'String'})
-  public nameExtendSchema() {
-    return 'test';
-  }
-}
+import { PluginFactory } from '../lib/factories/plugin.factory';
+import { TestPlugin } from './helpers/test-plugin';
 
 describe('SchemaTypeExplorerService', () => {
   let pluginExplorerService: PluginExplorerService;
@@ -52,7 +25,7 @@ describe('SchemaTypeExplorerService', () => {
     sinon.restore();
   });
 
-  it('should create all plugins', done => {
+  it('decorators should set correct metadata', done => {
     let count = 0;
     sinon.replace(pluginExplorerService as any, 'createPlugin',
       (
@@ -81,5 +54,19 @@ describe('SchemaTypeExplorerService', () => {
     });
 
     pluginExplorerService.getCombinedPlugin();
+  });
+
+  it('should create all the correct plugins', () => {
+    const createExtendSchemaSpy = sinon.spy(PluginFactory, 'createExtendSchemaPlugin');
+    const createProcessSchemaSpy = sinon.spy(PluginFactory, 'createProcessSchemaPlugin');
+    const createWrapResolverFilterSpy = sinon.spy(PluginFactory, 'createWrapResolverFilterPlugin');
+    const createAddInflectorsSpy = sinon.spy(PluginFactory, 'createAddInflectorsPlugin');
+
+    pluginExplorerService.getCombinedPlugin();
+
+    expect(createExtendSchemaSpy.callCount).toBe(1);
+    expect(createProcessSchemaSpy.callCount).toBe(1);
+    expect(createWrapResolverFilterSpy.callCount).toBe(1);
+    expect(createAddInflectorsSpy.callCount).toBe(1);
   });
 });
