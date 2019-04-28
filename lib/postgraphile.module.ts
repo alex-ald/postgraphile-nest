@@ -90,7 +90,7 @@ export class PostGraphileModule implements OnModuleInit {
     const app = httpAdapter.getInstance();
 
     // Break out PostGraphile options
-    const {pgConfig, schema, playground, playgroundRoute, ...postGraphileOptions} = this.options;
+    const {pgConfig, schema, playground, ...postGraphileOptions} = this.options;
 
     const { appendPlugins = [] } = postGraphileOptions;
 
@@ -107,8 +107,17 @@ export class PostGraphileModule implements OnModuleInit {
 
     app.use(this.postgraphile);
 
+    const graphqlRoute = this.options.graphqlRoute ||  '/graphql';
+    const playgroundRoute = this.options.playgroundRoute || '/playground';
+
     if (playground) {
-      app.get(playgroundRoute || '/playground', expressPlayground({ endpoint: '/graphql' }));
+      if (playgroundRoute === graphqlRoute) {
+        throw new Error(
+          `Cannot use the same route, '${graphqlRoute}', for both GraphQL and the Playground. Please use different routes.`,
+        );
+      }
+
+      app.get(playgroundRoute, expressPlayground({ endpoint: graphqlRoute }));
     }
   }
 
