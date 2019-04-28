@@ -18,6 +18,10 @@ import {
 } from 'graphile-utils';
 import { Plugin } from 'postgraphile';
 
+/**
+ * Explorer service handles creating plugins from all plugin metadata set in providers (Excluding
+ *  SchemaType providers, as there is a separate explorer service that handles them)
+ */
 @Injectable()
 export class PluginExplorerService extends BaseExplorerService {
   constructor(
@@ -66,15 +70,21 @@ export class PluginExplorerService extends BaseExplorerService {
   protected extractPlugin(instance: any, prototype: any, methodName: string) {
     const callback = prototype[methodName];
 
-    // tslint:disable-next-line: ban-types
-    const method = (instance[methodName] as Function).bind(instance);
-
-    const metadata = Reflect.getMetadata(
+    const pluginType = Reflect.getMetadata(
       PLUGIN_TYPE_METADATA,
       callback,
     ) as PluginType;
 
-    switch (metadata) {
+    return this.createPlugin(pluginType, instance, prototype, methodName);
+  }
+
+  createPlugin(pluginType: PluginType, instance: any, prototype: any, methodName: string) {
+    const callback = prototype[methodName];
+
+    // tslint:disable-next-line: ban-types
+    const method = (instance[methodName] as Function).bind(instance);
+
+    switch (pluginType) {
       case PluginType.ADD_INFLECTORS:
         const { inflector, overriteExisting } = Reflect.getMetadata(
           PLUGIN_DETAILS_METADATA,

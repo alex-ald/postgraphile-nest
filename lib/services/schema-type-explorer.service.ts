@@ -14,6 +14,9 @@ import { Injectable } from '@nestjs/common';
 import { Plugin } from 'postgraphile';
 import { ExtendSchemaOptions } from '../interfaces/extend-schema-options.interface';
 
+/**
+ * Explorer service handles creating plugins from a SchemaType provider and its plugin metadata set on the methods
+ */
 @Injectable()
 export class SchemaTypeExplorerService extends BaseExplorerService {
   constructor(
@@ -79,7 +82,7 @@ export class SchemaTypeExplorerService extends BaseExplorerService {
   ) {
     const callback = prototype[methodName];
 
-    const metadata = Reflect.getMetadata(
+    const pluginType = Reflect.getMetadata(
       SCHEMA_TYPE_PLUGIN_METADATA,
       callback,
     ) as PluginType;
@@ -89,15 +92,34 @@ export class SchemaTypeExplorerService extends BaseExplorerService {
       callback,
     );
 
-    if (metadata === PluginType.CHANGE_NULLABILITY) {
+    return this.createPlugin(
+      instance,
+      methodName,
+      pluginType,
+      pluginDetails,
+      typeName,
+    );
+  }
+
+  protected createPlugin(
+    instance: any,
+    methodName: string,
+    pluginType: PluginType,
+    pluginDetails: any,
+    typeName: string,
+  ) {
+    // tslint:disable-next-line:ban-types
+    const resolver = (instance[methodName] as Function).bind(instance);
+
+    if (pluginType === PluginType.CHANGE_NULLABILITY) {
       const { fieldName } = pluginDetails;
 
       return PluginFactory.createChangeNullabilityPlugin(
         typeName,
         fieldName,
-        instance[methodName](),
+        resolver(),
       );
-    } else if (metadata === PluginType.WRAP_RESOLVER) {
+    } else if (pluginType === PluginType.WRAP_RESOLVER) {
       const { fieldName, ...requirements } = pluginDetails;
 
       return PluginFactory.createWrapResolverPlugin(
@@ -105,9 +127,9 @@ export class SchemaTypeExplorerService extends BaseExplorerService {
         fieldName,
         requirements,
         // tslint:disable-next-line:ban-types
-        (instance[methodName] as Function).bind(instance),
+        resolver,
       );
-    } else if (metadata === PluginType.EXTEND_SCHEMA) {
+    } else if (pluginType === PluginType.EXTEND_SCHEMA) {
       const {
         additionalGraphql,
         fieldName,
@@ -120,7 +142,7 @@ export class SchemaTypeExplorerService extends BaseExplorerService {
         fieldName,
         fieldType,
         // tslint:disable-next-line:ban-types
-        (instance[methodName] as Function).bind(instance),
+        resolver,
         additionalGraphql,
       );
     }

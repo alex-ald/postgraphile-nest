@@ -93,11 +93,14 @@ export class PostGraphileModule implements OnModuleInit {
     const {pgConfig, schema, playground, ...postGraphileOptions} = this.options;
 
     const { appendPlugins = [] } = postGraphileOptions;
-    const accumulatedPlugin = this.schemaTypeExplorerService.getCombinedPlugin();
+
+    // Retrieve all plugins created by decorators
+    const accumulatedSchemaTypePlugin = this.schemaTypeExplorerService.getCombinedPlugin();
+    const accumulatedPlugin = this.pluginExplorerService.getCombinedPlugin();
 
     const updatedPostGraphileOptions = {
       ...postGraphileOptions,
-      appendPlugins: [...appendPlugins, accumulatedPlugin],
+      appendPlugins: [accumulatedSchemaTypePlugin, accumulatedPlugin, ...appendPlugins],
     };
 
     if (schema) {
