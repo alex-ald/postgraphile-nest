@@ -46,4 +46,16 @@ describe('PostGraphileModule', () => {
     expect(createWrapResolverFilterSpy.callCount).toBe(1);
     expect(createAddInflectorsSpy.callCount).toBe(1);
   });
+
+  it('playground and graphql route should not be allowed to be the same', async () => {
+    sinon.stub(PostGraphileModule.prototype as any, 'createPostGraphql').returns(() => {/* */});
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [PostGraphileModule.forRoot({ pgConfig: '', playground: true, playgroundRoute: '/graphql' })],
+    }).compile();
+
+    const app = moduleFixture.createNestApplication();
+
+    expect.assertions(1);
+    await expect(app.init()).rejects.toBeTruthy();
+  });
 });
