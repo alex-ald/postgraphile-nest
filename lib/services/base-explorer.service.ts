@@ -2,26 +2,15 @@ import { ModulesContainer } from '@nestjs/core';
 import { Module } from '@nestjs/core/injector/module';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { flattenDeep, identity } from 'lodash';
-import {
-  SCHEMA_PLUGINS_METADATA,
-  PLUGIN_TYPE_METADATA,
-  PLUGIN_DETAILS_METADATA,
-} from '../postgraphile.constants';
-import { Injectable } from '@nestjs/common';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { PluginType } from '../enums/plugin-type.enum';
-import {
-  makeAddInflectorsPlugin,
-  makeProcessSchemaPlugin,
-  makeChangeNullabilityPlugin,
-} from 'graphile-utils';
-
 
 export abstract class BaseExplorerService {
-  constructor(
-    protected readonly modulesContainer: ModulesContainer,
-  ) {}
+  constructor(protected readonly modulesContainer: ModulesContainer) {}
 
+  /**
+   * Obtains all the providers from the modules passed then maps them with the mapModule callback.
+   * If the mapping generates a list, the returned value is flattened so all nested arrays are
+   *  merged into one array.
+   */
   protected evaluateModules(
     modules: Module[],
     mapModule: (instance: InstanceWrapper, moduleRef: Module) => any,
@@ -35,6 +24,9 @@ export abstract class BaseExplorerService {
     return flattenDeep(invokeMap()).filter(identity);
   }
 
+  /**
+   * Gathers all modules
+   */
   protected getModules() {
     return [...this.modulesContainer.values()];
   }

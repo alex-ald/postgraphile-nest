@@ -14,8 +14,9 @@ import {
   makeProcessSchemaPlugin,
   makeAddInflectorsPlugin,
   makeWrapResolversPlugin,
+  makePluginByCombiningPlugins,
 } from 'graphile-utils';
-
+import { Plugin } from 'postgraphile';
 
 @Injectable()
 export class PluginExplorerService extends BaseExplorerService {
@@ -26,14 +27,22 @@ export class PluginExplorerService extends BaseExplorerService {
     super(modulesContainer);
   }
 
-  public getPlugins() {
+  /**
+   * Returns a plugin combining all the plugins found from all module's providers
+   */
+  public getCombinedPlugin() {
     const modules = this.getModules();
 
-    return this.evaluateModules(modules, instance =>
+    const plugins: Plugin[] = this.evaluateModules(modules, instance =>
       this.filterAttachPlugins(instance),
     );
+
+    return makePluginByCombiningPlugins(...plugins);
   }
 
+  /**
+   * Returns a list of all the plugins created from all provider's method metadata set by the decorators
+   */
   protected filterAttachPlugins(wrapper: InstanceWrapper) {
     const { instance } = wrapper;
 
@@ -45,13 +54,16 @@ export class PluginExplorerService extends BaseExplorerService {
     const plugins = this.metadataScanner.scanFromPrototype(
       instance,
       prototype,
-      methodName => this.extractPlugins(instance, prototype, methodName),
+      methodName => this.extractPlugin(instance, prototype, methodName),
     );
 
     return plugins;
   }
 
-  protected extractPlugins(instance: any, prototype: any, methodName: string) {
+  /**
+   * Extracts the plugin based on the metadata set on the method
+   */
+  protected extractPlugin(instance: any, prototype: any, methodName: string) {
     const callback = prototype[methodName];
 
     // tslint:disable-next-line: ban-types
@@ -78,8 +90,14 @@ export class PluginExplorerService extends BaseExplorerService {
         return makeWrapResolversPlugin(method);
       case PluginType.WRAP_RESOLVER:
         const {
-          additionalGraphql, fieldName, fieldType, typeName,
-        } = Reflect.getMetadata(PLUGIN_DETAILS_METADATA, callback) as ExtendSchemaOptions;
+          additionalGraphql,
+          fieldName,
+          fieldType,
+          typeName,
+        } = Reflect.getMetadata(
+          PLUGIN_DETAILS_METADATA,
+          callback,
+        ) as ExtendSchemaOptions;
 
         return PluginFactory.createExtendSchemaPlugin(
           typeName,

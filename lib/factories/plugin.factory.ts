@@ -55,8 +55,8 @@ export class PluginFactory {
         `,
         resolvers: {
           [typeName]: {
-            [fieldName]: async (_query, args, context, resolveInfo) => {
-              return await resolver(_query, args, context, resolveInfo, build);
+            [fieldName]: async (query, args, context, resolveInfo) => {
+              return await resolver(query, args, context, resolveInfo, build);
             },
           },
         },
