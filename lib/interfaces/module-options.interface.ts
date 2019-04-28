@@ -7,7 +7,7 @@ export interface PGraphileModuleOptions extends PostGraphileOptions {
     pgConfig: PoolConfig | string;
     schema?: string | string[];
     playground?: boolean;
-    playgroundRoute: string;
+    playgroundRoute?: string;
 }
 
 export interface PGraphileOptionsFactory {
