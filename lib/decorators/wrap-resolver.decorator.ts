@@ -1,7 +1,7 @@
 import { SetMetadata } from '@nestjs/common';
 import {
   SCHEMA_TYPE_PLUGIN_METADATA,
-  SCHEMA_TYPE_PLUGIN_DETAILS_METADATA,
+  PLUGIN_DETAILS_METADATA,
 } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
 import { ResolverWrapperRequirements } from '../interfaces/wrap-resolver-requirements.interface';
@@ -25,7 +25,7 @@ export function WrapResolver(
       descriptor,
     );
 
-    SetMetadata(SCHEMA_TYPE_PLUGIN_DETAILS_METADATA, { fieldName, requirements })(
+    SetMetadata(PLUGIN_DETAILS_METADATA, { fieldName, requirements })(
       target,
       propertyKey,
       descriptor,

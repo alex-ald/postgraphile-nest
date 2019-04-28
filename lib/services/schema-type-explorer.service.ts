@@ -3,11 +3,12 @@ import { ModulesContainer } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { BaseExplorerService } from './base-explorer.service';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { SCHEMA_TYPE_METADATA, SCHEMA_TYPE_PLUGIN_METADATA, SCHEMA_TYPE_PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
+import { SCHEMA_TYPE_METADATA, SCHEMA_TYPE_PLUGIN_METADATA, PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
 import { makePluginByCombiningPlugins } from 'graphile-utils';
 import { Injectable } from '@nestjs/common';
 import { Plugin } from 'postgraphile';
+import { ExtendSchemaOptions } from '../interfaces/extend-schema-options.interface';
 
 @Injectable()
 export class SchemaTypeExplorerService extends  BaseExplorerService {
@@ -56,15 +57,15 @@ export class SchemaTypeExplorerService extends  BaseExplorerService {
     return undefined;
   }
 
-  protected extractTypePlugins(instance: any, prototype: any, propertyName: string, typeName: string) {
-    const callback = prototype[propertyName];
+  protected extractTypePlugins(instance: any, prototype: any, methodName: string, typeName: string) {
+    const callback = prototype[methodName];
 
     const metadata = Reflect.getMetadata(
       SCHEMA_TYPE_PLUGIN_METADATA,
       callback,
     ) as PluginType;
 
-    const pluginDetails = Reflect.getMetadata(SCHEMA_TYPE_PLUGIN_DETAILS_METADATA, callback);
+    const pluginDetails = Reflect.getMetadata(PLUGIN_DETAILS_METADATA, callback);
 
     if (metadata === PluginType.CHANGE_NULLABILITY) {
       const { fieldName } = pluginDetails;
@@ -72,7 +73,7 @@ export class SchemaTypeExplorerService extends  BaseExplorerService {
       return PluginFactory.createChangeNullabilityPlugin(
         typeName,
         fieldName,
-        instance[propertyName]());
+        instance[methodName]());
     } else if (metadata === PluginType.WRAP_RESOLVER) {
       const { fieldName, requirements } = pluginDetails;
 
@@ -81,7 +82,20 @@ export class SchemaTypeExplorerService extends  BaseExplorerService {
         fieldName,
         requirements,
         // tslint:disable-next-line:ban-types
-        (instance[propertyName] as Function).bind(instance));
+        (instance[methodName] as Function).bind(instance));
+    } else if (metadata === PluginType.EXTEND_SCHEMA) {
+      const {
+        additionalGraphql, fieldName, fieldType, typeName: actualTypeName,
+      } = pluginDetails as ExtendSchemaOptions;
+
+      return PluginFactory.createExtendSchemaPlugin(
+        actualTypeName || typeName,
+        fieldName,
+        fieldType,
+        // tslint:disable-next-line:ban-types
+        (instance[methodName] as Function).bind(instance),
+        additionalGraphql,
+      );
     }
 
     return undefined;

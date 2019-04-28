@@ -8,6 +8,8 @@ import { Injectable } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { PluginType } from '../enums/plugin-type.enum';
 import { BaseExplorerService } from './base-explorer.service';
+import { ExtendSchemaOptions } from '../interfaces/extend-schema-options.interface';
+import { PluginFactory } from '../factories/plugin.factory';
 import {
   makeProcessSchemaPlugin,
   makeAddInflectorsPlugin,
@@ -73,7 +75,20 @@ export class PluginExplorerService extends BaseExplorerService {
       case PluginType.PROCESS_SCHEMA:
         return makeProcessSchemaPlugin(method);
       case PluginType.WRAP_RESOLVER:
-      return makeWrapResolversPlugin(method);
+        return makeWrapResolversPlugin(method);
+      case PluginType.WRAP_RESOLVER:
+        const {
+          additionalGraphql, fieldName, fieldType, typeName,
+        } = Reflect.getMetadata(PLUGIN_DETAILS_METADATA, callback) as ExtendSchemaOptions;
+
+        return PluginFactory.createExtendSchemaPlugin(
+          typeName,
+          fieldName,
+          fieldType,
+          // tslint:disable-next-line:ban-types
+          (instance[methodName] as Function).bind(instance),
+          additionalGraphql,
+        );
       default:
         return undefined;
     }

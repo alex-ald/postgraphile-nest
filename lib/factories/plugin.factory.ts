@@ -1,4 +1,4 @@
-import { makeChangeNullabilityPlugin, makeWrapResolversPlugin } from 'graphile-utils';
+import { makeChangeNullabilityPlugin, makeWrapResolversPlugin, makeExtendSchemaPlugin, gql } from 'graphile-utils';
 import { ResolverWrapperRequirements } from '../interfaces/wrap-resolver-requirements.interface';
 
 /**
@@ -33,6 +33,34 @@ export class PluginFactory {
           resolve: resolver as any,
         },
       },
+    });
+  }
+
+  public static createExtendSchemaPlugin(
+    typeName: string,
+    fieldName: string,
+    fieldType: string,
+    // tslint:disable-next-line:ban-types
+    resolver: Function,
+    additionalGraphql?: any,
+  ) {
+    return makeExtendSchemaPlugin(build => {
+      return {
+        typeDefs: gql`
+          ${additionalGraphql}
+
+          extend type ${typeName} {
+            ${fieldName}: ${fieldType}
+          }
+        `,
+        resolvers: {
+          [typeName]: {
+            [fieldName]: async (_query, args, context, resolveInfo) => {
+              return await resolver(_query, args, context, resolveInfo, build);
+            },
+          },
+        },
+      };
     });
   }
 }

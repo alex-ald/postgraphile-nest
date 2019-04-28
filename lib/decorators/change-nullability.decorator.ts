@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { SCHEMA_TYPE_PLUGIN_METADATA, SCHEMA_TYPE_PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
+import { SCHEMA_TYPE_PLUGIN_METADATA, PLUGIN_DETAILS_METADATA } from '../postgraphile.constants';
 import { PluginType } from '../enums/plugin-type.enum';
 
 export function ChangeNullability();
@@ -17,7 +17,7 @@ export function ChangeNullability(fieldName?: string) {
       descriptor,
     );
 
-    SetMetadata(SCHEMA_TYPE_PLUGIN_DETAILS_METADATA, { fieldName })(
+    SetMetadata(PLUGIN_DETAILS_METADATA, { fieldName })(
       target,
       propertyKey,
       descriptor,
