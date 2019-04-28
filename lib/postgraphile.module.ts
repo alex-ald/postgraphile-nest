@@ -6,9 +6,10 @@ import { PGraphilelModuleAsyncOptions, PGraphileModuleOptions, PGraphileOptionsF
 import expressPlayground from 'graphql-playground-middleware-express';
 import { PluginExplorerService } from './services/plugin-explorer.service';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { SchemaTypeExplorerService } from './services/schema-type-explorer.service';
 
 @Module({
-  providers: [MetadataScanner, PluginExplorerService]
+  providers: [MetadataScanner, PluginExplorerService, SchemaTypeExplorerService],
 })
 export class PostGraphileModule implements OnModuleInit {
 
@@ -17,6 +18,7 @@ export class PostGraphileModule implements OnModuleInit {
   constructor(
       private readonly httpAdapterHost: HttpAdapterHost,
       private readonly pluginExplorerService: PluginExplorerService,
+      private readonly schemaTypeExplorerService: SchemaTypeExplorerService,
       @Inject(POSTGRAPHILE_MODULE_OPTIONS) private readonly options: PGraphileModuleOptions,
   ) {}
 
@@ -76,8 +78,6 @@ export class PostGraphileModule implements OnModuleInit {
   }
 
   onModuleInit() {
-    const values = this.pluginExplorerService.getPlugins();
-
     if (!this.httpAdapterHost) {
     return;
     }
@@ -92,16 +92,43 @@ export class PostGraphileModule implements OnModuleInit {
     // Break out PostGraphile options
     const {pgConfig, schema, playground, ...postGraphileOptions} = this.options;
 
-    if (schema) {
-      this.postgraphile = postgraphql(pgConfig, schema, postGraphileOptions);
-    } else {
-      this.postgraphile = postgraphql(pgConfig, postGraphileOptions);
-    }
+    const { appendPlugins = [] } = postGraphileOptions;
+
+    // Retrieve all plugins created by decorators
+    const accumulatedSchemaTypePlugin = this.schemaTypeExplorerService.getCombinedPlugin();
+    const accumulatedPlugin = this.pluginExplorerService.getCombinedPlugin();
+
+    const updatedPostGraphileOptions = {
+      ...postGraphileOptions,
+      appendPlugins: [accumulatedSchemaTypePlugin, accumulatedPlugin, ...appendPlugins],
+    };
+
+    this.postgraphile = this.createPostGraphql(pgConfig, schema, updatedPostGraphileOptions);
 
     app.use(this.postgraphile);
 
+    const graphqlRoute = this.options.graphqlRoute ||  '/graphql';
+    const playgroundRoute = this.options.playgroundRoute || '/playground';
+
     if (playground) {
-      app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
+      if (playgroundRoute === graphqlRoute) {
+        throw new Error(
+          `Cannot use the same route, '${graphqlRoute}', for both GraphQL and the Playground. Please use different routes.`,
+        );
+      }
+
+      app.get(playgroundRoute, expressPlayground({ endpoint: graphqlRoute }));
+    }
+  }
+
+  /**
+   * Creates PostGraphile server
+   */
+  private createPostGraphql(pgConfig, schema, options) {
+    if (schema) {
+      return  postgraphql(pgConfig, schema, options);
+    } else {
+      return postgraphql(pgConfig, options);
     }
   }
 }
