@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SchemaType, ChangeNullability, WrapResolver } from '../lib';
 import * as sinon from 'sinon';
 import { PluginType } from '../lib/enums/plugin-type.enum';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
@@ -8,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { AddInflector } from '../lib/decorators/add-inflector-plugin.decorator';
 import { ProcessSchema } from '../lib/decorators/process-schema-plugin.decorator';
 import { WrapResolverFilter } from '../lib/decorators/wrap-resolver-filter.decorator';
+import { ExtendSchema } from '../lib/decorators/extend-schema.decorator';
 
 @Injectable()
 class TestPlugin {
@@ -24,6 +24,11 @@ class TestPlugin {
 
   @WrapResolverFilter()
   public resolverFilter() {
+    return 'test';
+  }
+
+  @ExtendSchema({ typeName: 'User', fieldName: 'name', fieldType: 'String'})
+  public nameExtendSchema() {
     return 'test';
   }
 }
@@ -67,6 +72,9 @@ describe('SchemaTypeExplorerService', () => {
         } else if (count === 3) {
           expect(methodName).toBe('resolverFilter');
           expect(pluginType).toBe(PluginType.WRAP_RESOLVER);
+        } else if (count === 4) {
+          expect(methodName).toBe('nameExtendSchema');
+          expect(pluginType).toBe(PluginType.EXTEND_SCHEMA);
 
           done();
         }

@@ -17,7 +17,7 @@ export function ExtendSchema(
     descriptor?: any,
   ) => {
     if (options.typeName) {
-      SetMetadata(PLUGIN_TYPE_METADATA, PluginType.WRAP_RESOLVER)(
+      SetMetadata(PLUGIN_TYPE_METADATA, PluginType.EXTEND_SCHEMA)(
         target,
         propertyKey,
         descriptor,

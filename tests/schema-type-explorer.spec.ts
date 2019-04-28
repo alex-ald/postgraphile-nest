@@ -4,6 +4,7 @@ import { SchemaType, ChangeNullability, WrapResolver } from '../lib';
 import * as sinon from 'sinon';
 import { PluginType } from '../lib/enums/plugin-type.enum';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { ExtendSchema } from '../lib/decorators/extend-schema.decorator';
 
 @SchemaType('User')
 class TestPlugin {
@@ -16,6 +17,11 @@ class TestPlugin {
   @WrapResolver({ fieldName: 'name' })
   public nameResolver() {
     return 'test';
+  }
+
+  @ExtendSchema({ fieldName: 'name2', fieldType: 'String' })
+  public addName2Field() {
+    return 'test2';
   }
 }
 
@@ -56,6 +62,9 @@ describe('SchemaTypeExplorerService', () => {
         } else if (count === 2) {
           expect(methodName).toBe('nameResolver');
           expect(pluginType).toBe(PluginType.WRAP_RESOLVER);
+        } else if (count === 3) {
+          expect(methodName).toBe('addName2Field');
+          expect(pluginType).toBe(PluginType.EXTEND_SCHEMA);
 
           done();
         }

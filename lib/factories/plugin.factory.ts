@@ -1,4 +1,10 @@
-import { makeChangeNullabilityPlugin, makeWrapResolversPlugin, makeExtendSchemaPlugin, gql } from 'graphile-utils';
+import {
+  makeChangeNullabilityPlugin,
+  makeWrapResolversPlugin,
+  makeExtendSchemaPlugin,
+  makeAddInflectorsPlugin,
+  makeProcessSchemaPlugin,
+  gql } from 'graphile-utils';
 import { ResolverWrapperRequirements } from '../interfaces/wrap-resolver-requirements.interface';
 
 /**
@@ -36,6 +42,14 @@ export class PluginFactory {
     });
   }
 
+  public static createWrapResolverFilterPlugin(method: (...args: any[]) => any) {
+    return makeWrapResolversPlugin(method);
+  }
+
+  public static createProcessSchemaPlugin(method: (...args: any[]) => any) {
+    return makeProcessSchemaPlugin(method);
+  }
+
   public static createExtendSchemaPlugin(
     typeName: string,
     fieldName: string,
@@ -62,5 +76,16 @@ export class PluginFactory {
         },
       };
     });
+  }
+
+  public static createAddInflectorsPlugin(
+    inflectorName: string,
+    method: (...args: any[]) => any,
+    overriteExisting?: boolean,
+  ) {
+      return makeAddInflectorsPlugin(
+        { [inflectorName]: method },
+        overriteExisting,
+      );
   }
 }

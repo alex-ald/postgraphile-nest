@@ -1,22 +1,17 @@
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Injectable } from '@nestjs/common';
+import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { Plugin } from 'postgraphile';
+import {makePluginByCombiningPlugins } from 'graphile-utils';
 import {
   PLUGIN_TYPE_METADATA,
   PLUGIN_DETAILS_METADATA,
 } from '../postgraphile.constants';
-import { Injectable } from '@nestjs/common';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { PluginType } from '../enums/plugin-type.enum';
 import { BaseExplorerService } from './base-explorer.service';
 import { ExtendSchemaOptions } from '../interfaces/extend-schema-options.interface';
 import { PluginFactory } from '../factories/plugin.factory';
-import {
-  makeProcessSchemaPlugin,
-  makeAddInflectorsPlugin,
-  makeWrapResolversPlugin,
-  makePluginByCombiningPlugins,
-} from 'graphile-utils';
-import { Plugin } from 'postgraphile';
 
 /**
  * Explorer service handles creating plugins from all plugin metadata set in providers (Excluding
@@ -94,15 +89,12 @@ export class PluginExplorerService extends BaseExplorerService {
           PLUGIN_DETAILS_METADATA,
           callback,
         );
-        return makeAddInflectorsPlugin(
-          { [inflector]: method },
-          overriteExisting,
-        );
+        return PluginFactory.createAddInflectorsPlugin(inflector, method, overriteExisting);
       case PluginType.PROCESS_SCHEMA:
-        return makeProcessSchemaPlugin(method);
+        return PluginFactory.createProcessSchemaPlugin(method);
       case PluginType.WRAP_RESOLVER:
-        return makeWrapResolversPlugin(method);
-      case PluginType.WRAP_RESOLVER:
+        return PluginFactory.createWrapResolverFilterPlugin(method);
+      case PluginType.EXTEND_SCHEMA:
         const {
           additionalGraphql,
           fieldName,
