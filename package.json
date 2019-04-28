@@ -17,6 +17,7 @@
     "publish:next": "npm publish --access public --tag next"
   },
   "dependencies": {
+    "@nestjs/core": "^6.1.1",
     "graphile-utils": "^4.3.1",
     "graphql-playground-middleware-express": "^1.7.12",
     "lodash": "^4.17.11",
