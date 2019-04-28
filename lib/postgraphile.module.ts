@@ -90,7 +90,7 @@ export class PostGraphileModule implements OnModuleInit {
     const app = httpAdapter.getInstance();
 
     // Break out PostGraphile options
-    const {pgConfig, schema, playground, ...postGraphileOptions} = this.options;
+    const {pgConfig, schema, playground, playgroundRoute, ...postGraphileOptions} = this.options;
 
     const { appendPlugins = [] } = postGraphileOptions;
 
@@ -108,7 +108,7 @@ export class PostGraphileModule implements OnModuleInit {
     app.use(this.postgraphile);
 
     if (playground) {
-      app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
+      app.get(playgroundRoute || '/playground', expressPlayground({ endpoint: '/graphql' }));
     }
   }
 
