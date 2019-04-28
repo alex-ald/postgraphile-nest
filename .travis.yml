@@ -5,7 +5,7 @@ before_install:
   # Install peer dependencies
   - "npm install @nestjs/common @nestjs/core postgraphile reflect-metadata"
 script:
-  - npm run test
+  - npm run ci
 deploy:
   provider: npm
   email: hi@alexald.com
