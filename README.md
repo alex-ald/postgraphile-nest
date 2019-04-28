@@ -1,5 +1,9 @@
 # PostGraphile for Nestjs
 
+[![Build Status](https://travis-ci.com/alex-ald/postgraphile-nest.svg?branch=master)](https://travis-ci.com/alex-ald/postgraphile-nest)
+[![Coverage Status](https://coveralls.io/repos/github/alex-ald/postgraphile-nest/badge.svg)](https://coveralls.io/github/alex-ald/postgraphile-nest)
+
+
 ## In Development
 
 ## Task List for beta release (1.0.0)
