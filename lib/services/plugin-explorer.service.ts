@@ -75,7 +75,11 @@ export class PluginExplorerService extends BaseExplorerService {
       callback,
     ) as PluginType;
 
-    return this.createPlugin(pluginType, instance, prototype, methodName);
+    if (pluginType) {
+      return this.createPlugin(pluginType, instance, prototype, methodName);
+    } else {
+      return undefined;
+    }
   }
 
   createPlugin(pluginType: PluginType, instance: any, prototype: any, methodName: string) {
