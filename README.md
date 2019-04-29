@@ -8,3 +8,25 @@
 
 [![Build Status](https://travis-ci.com/alex-ald/postgraphile-nest.svg?branch=master)](https://travis-ci.com/alex-ald/postgraphile-nest)
 [![Coverage Status](https://coveralls.io/repos/github/alex-ald/postgraphile-nest/badge.svg)](https://coveralls.io/github/alex-ald/postgraphile-nest)
+
+## Description
+
+A module for [Nest](https://github.com/nestjs/nest) that allows you to easily integrate [PostGraphile](https://www.graphile.org/postgraphile/) into your application.
+
+## Installation
+
+```bash
+$ npm i --save postgraphile-nest postgraphile
+```
+
+## Documentation
+
+Visit our [Wiki](https://github.com/alex-ald/postgraphile-nest/wiki) for documentiation and examples.
+
+## Thanks
+
+The maintainer of this project is [Alex Aldana](https://alexald.com)!
+
+## License
+
+[MIT licensed](LICENSE)
