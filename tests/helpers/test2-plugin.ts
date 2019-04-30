@@ -1,6 +1,6 @@
 import { SchemaType, ChangeNullability, WrapResolver, ExtendSchema } from '../../lib';
 
-@SchemaType('User')
+@SchemaType({ typeName: 'User' })
 export class Test2Plugin {
 
   @ChangeNullability({ fieldName: 'name' })
