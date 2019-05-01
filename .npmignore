@@ -1,6 +1,6 @@
 tests
 doc
-lib
+/lib
 assets
 examples
 
@@ -25,3 +25,4 @@ package-lock.json
 coverage
 
 .vscode
+*.tgz
