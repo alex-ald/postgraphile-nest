@@ -15,6 +15,7 @@ A module for [Nest](https://github.com/nestjs/nest) that allows you to easily in
 
 ## Installation
 
+**NOTE: STILL IN DEVELOPMENT. THERE IS NO PACKAGE YET.**
 ```bash
 $ npm i --save postgraphile-nest postgraphile
 ```
