@@ -1,7 +1,7 @@
 {
   "name": "postgraphile-nest",
-  "version": "0.0.1",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Nestjs module for incorporating PostGraphile into your application",
   "author": "Alex Aldana",
   "license": "MIT",
   "main": "dist/index.js",
