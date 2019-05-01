@@ -43,9 +43,6 @@ describe('SchemaTypeExplorerService', () => {
           expect(methodName).toBe('nameResolver');
           expect(pluginType).toBe(PluginType.PROCESS_SCHEMA);
         } else if (count === 3) {
-          expect(methodName).toBe('resolverFilter');
-          expect(pluginType).toBe(PluginType.WRAP_RESOLVER);
-        } else if (count === 4) {
           expect(methodName).toBe('nameExtendSchema');
           expect(pluginType).toBe(PluginType.EXTEND_SCHEMA);
 
@@ -59,14 +56,12 @@ describe('SchemaTypeExplorerService', () => {
   it('should create all the correct plugins', () => {
     const createExtendSchemaSpy = sinon.spy(PluginFactory, 'createExtendSchemaPlugin');
     const createProcessSchemaSpy = sinon.spy(PluginFactory, 'createProcessSchemaPlugin');
-    const createWrapResolverFilterSpy = sinon.spy(PluginFactory, 'createWrapResolverFilterPlugin');
     const createAddInflectorsSpy = sinon.spy(PluginFactory, 'createAddInflectorsPlugin');
 
     pluginExplorerService.getCombinedPlugin();
 
     expect(createExtendSchemaSpy.callCount).toBe(1);
     expect(createProcessSchemaSpy.callCount).toBe(1);
-    expect(createWrapResolverFilterSpy.callCount).toBe(1);
     expect(createAddInflectorsSpy.callCount).toBe(1);
   });
 });

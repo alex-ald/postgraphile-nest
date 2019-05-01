@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AddInflector, ProcessSchema, WrapResolverFilter, ExtendSchema } from '../../lib';
+import { AddInflector, ProcessSchema, ExtendSchema } from '../../lib';
 
 @Injectable()
 export class TestPlugin {
@@ -11,11 +11,6 @@ export class TestPlugin {
 
   @ProcessSchema()
   public nameResolver(schema: any) {
-    return 'test';
-  }
-
-  @WrapResolverFilter()
-  public resolverFilter() {
     return 'test';
   }
 

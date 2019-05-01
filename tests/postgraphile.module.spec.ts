@@ -28,7 +28,6 @@ describe('PostGraphileModule', () => {
     const createWrapResolverSpy = sinon.spy(PluginFactory, 'createWrapResolverPlugin');
     const createChangeNullabilitySpy = sinon.spy(PluginFactory, 'createChangeNullabilityPlugin');
     const createProcessSchemaSpy = sinon.spy(PluginFactory, 'createProcessSchemaPlugin');
-    const createWrapResolverFilterSpy = sinon.spy(PluginFactory, 'createWrapResolverFilterPlugin');
     const createAddInflectorsSpy = sinon.spy(PluginFactory, 'createAddInflectorsPlugin');
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -43,7 +42,6 @@ describe('PostGraphileModule', () => {
     expect(createWrapResolverSpy.callCount).toBe(1);
     expect(createChangeNullabilitySpy.callCount).toBe(1);
     expect(createProcessSchemaSpy.callCount).toBe(1);
-    expect(createWrapResolverFilterSpy.callCount).toBe(1);
     expect(createAddInflectorsSpy.callCount).toBe(1);
   });
 

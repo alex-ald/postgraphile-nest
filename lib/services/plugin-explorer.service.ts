@@ -92,8 +92,6 @@ export class PluginExplorerService extends BaseExplorerService {
         return PluginFactory.createAddInflectorsPlugin(inflector, method, overwriteExisting);
       case PluginType.PROCESS_SCHEMA:
         return PluginFactory.createProcessSchemaPlugin(method);
-      case PluginType.WRAP_RESOLVER:
-        return PluginFactory.createWrapResolverFilterPlugin(method);
       case PluginType.EXTEND_SCHEMA:
         const {
           additionalGraphql,

@@ -42,10 +42,6 @@ export class PluginFactory {
     });
   }
 
-  public static createWrapResolverFilterPlugin(method: (...args: any[]) => any) {
-    return makeWrapResolversPlugin(method);
-  }
-
   public static createProcessSchemaPlugin(method: (...args: any[]) => any) {
     return makeProcessSchemaPlugin(method);
   }
