@@ -6,6 +6,9 @@ before_install:
   - "npm install @nestjs/common @nestjs/core postgraphile reflect-metadata"
 script:
   - npm run ci
+
+before_deploy:
+  - npm run prepare:publish
 deploy:
   provider: npm
   email: hi@alexald.com
