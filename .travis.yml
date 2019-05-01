@@ -14,6 +14,7 @@ after_success:
 
 deploy:
   provider: npm
+  skip_cleanup: true
   email: hi@alexald.com
   api_key: $NPM_TOKEN
   on:
