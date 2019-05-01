@@ -1,6 +1,7 @@
-test
+tests
 doc
 lib
+assets
 examples
 
 .DS_Store
@@ -11,6 +12,11 @@ gulpfile.js
 
 tsconfig.json
 tslint.json
+.editorconfig
+.gitignore
+.prettierrc
+.travis.yml
+jest.config.js
 
 yarn.lock
 package-lock.json
