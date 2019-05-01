@@ -81,11 +81,11 @@ export class PluginFactory {
   public static createAddInflectorsPlugin(
     inflectorName: string,
     method: (...args: any[]) => any,
-    overriteExisting?: boolean,
+    overwriteExisting?: boolean,
   ) {
-      return makeAddInflectorsPlugin(
-        { [inflectorName]: method },
-        overriteExisting,
-      );
+    return makeAddInflectorsPlugin(
+      { [inflectorName]: method },
+      overwriteExisting,
+    );
   }
 }

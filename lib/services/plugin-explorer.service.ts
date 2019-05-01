@@ -85,11 +85,11 @@ export class PluginExplorerService extends BaseExplorerService {
 
     switch (pluginType) {
       case PluginType.ADD_INFLECTORS:
-        const { inflector, overriteExisting } = Reflect.getMetadata(
+        const { inflector, overwriteExisting } = Reflect.getMetadata(
           PLUGIN_DETAILS_METADATA,
           callback,
         );
-        return PluginFactory.createAddInflectorsPlugin(inflector, method, overriteExisting);
+        return PluginFactory.createAddInflectorsPlugin(inflector, method, overwriteExisting);
       case PluginType.PROCESS_SCHEMA:
         return PluginFactory.createProcessSchemaPlugin(method);
       case PluginType.WRAP_RESOLVER:
