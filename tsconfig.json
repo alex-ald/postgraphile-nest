@@ -10,5 +10,11 @@
     "outDir": "./dist",
     "baseUrl": "./"
   },
-  "exclude": ["node_modules"]
+  "include": [
+    "lib/**/*"
+  ],
+  "exclude": [
+      "node_modules",
+      "**/*.spec.ts"
+  ]
 }
