@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://www.graphile.org/postgraphile/" target="blank"><img width="120" height="120" title="PostGraphile logo" src="https://cdn.rawgit.com/graphile/graphile.github.io/a6225f8c3052df5c276ecef28aeb0cade1aec16a/logos/postgraphile.optimized.svg" /></a>
-  <img src="./assets/plus.svg" />
+  <img src="https://svgshare.com/i/Ckm.svg" />
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
 
