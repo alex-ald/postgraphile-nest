@@ -8,6 +8,7 @@
 
 [![Build Status](https://travis-ci.com/alex-ald/postgraphile-nest.svg?branch=master)](https://travis-ci.com/alex-ald/postgraphile-nest)
 [![Coverage Status](https://coveralls.io/repos/github/alex-ald/postgraphile-nest/badge.svg)](https://coveralls.io/github/alex-ald/postgraphile-nest)
+[![npm version](https://badge.fury.io/js/postgraphile-nest.svg)](https://badge.fury.io/js/postgraphile-nest)
 
 ## Description
 
