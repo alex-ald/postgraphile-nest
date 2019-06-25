@@ -17,4 +17,13 @@ export class Test2Plugin {
   public addName2Field() {
     return 'test2';
   }
+
+  @ExtendSchema({
+    typeName: 'Mutation',
+    fieldName: ' registerUser(input: String!)',
+    fieldType: 'String',
+  })
+  public registerUser(_query: any, args: any, resolveInfo: any, { pgSql: sql }: any) {
+    return 'testing';
+  }
 }

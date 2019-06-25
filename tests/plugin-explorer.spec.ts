@@ -5,6 +5,7 @@ import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { PluginExplorerService } from '../lib/services/plugin-explorer.service';
 import { PluginFactory } from '../lib/factories/plugin.factory';
 import { TestPlugin } from './helpers/test-plugin';
+import { Test3Plugin } from './helpers/test3-plugin';
 
 describe('SchemaTypeExplorerService', () => {
   let pluginExplorerService: PluginExplorerService;
@@ -63,5 +64,18 @@ describe('SchemaTypeExplorerService', () => {
     expect(createExtendSchemaSpy.callCount).toBe(1);
     expect(createProcessSchemaSpy.callCount).toBe(1);
     expect(createAddInflectorsSpy.callCount).toBe(1);
+  });
+
+  it('should throw error on incorrect format for a field with ExtendSchema decorator', async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      providers: [MetadataScanner, PluginExplorerService, Test3Plugin],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+
+    pluginExplorerService = app.get(PluginExplorerService);
+
+    expect(pluginExplorerService.getCombinedPlugin).toThrow();
   });
 });
