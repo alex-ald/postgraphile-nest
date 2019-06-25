@@ -38,7 +38,7 @@ describe('PostGraphileModule', () => {
     const app = moduleFixture.createNestApplication();
     await app.init();
 
-    expect(createExtendSchemaSpy.callCount).toBe(2);
+    expect(createExtendSchemaSpy.callCount).toBe(3);
     expect(createWrapResolverSpy.callCount).toBe(1);
     expect(createChangeNullabilitySpy.callCount).toBe(1);
     expect(createProcessSchemaSpy.callCount).toBe(1);
