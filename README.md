@@ -26,7 +26,7 @@ Visit our [Wiki](https://github.com/alex-ald/postgraphile-nest/wiki) for documen
 
 ## Thanks
 
-The maintainer of this project is [Alex Aldana](https://alexald.com)!
+The maintainer of this project is [Alex Aldana](https://github.com/alex-ald)!
 
 ## License
 
