@@ -8,21 +8,22 @@ import { SchemaTypeExplorerService } from '../lib/services/schema-type-explorer.
 import { PostGraphileModule } from '../lib/postgraphile.module';
 
 describe('PostGraphileModule', () => {
-
   afterEach(() => {
     sinon.restore();
   });
 
   it('should add created plugins to options for PostGraphile server', async () => {
-    sinon.replace(PostGraphileModule.prototype as any, 'createPostGraphql', (
-      config: any,
-      schema?: any,
-      options?: PostGraphileOptions,
-    ): any => {
-      expect(options.appendPlugins.length).toBe(3);
+    sinon.replace(
+      PostGraphileModule.prototype as any,
+      'createPostGraphql',
+      (config: any, schema?: any, options?: PostGraphileOptions): any => {
+        expect(options.appendPlugins.length).toBe(3);
 
-      return () => {/* requries a function to be returned */};
-    });
+        return () => {
+          /* requries a function to be returned */
+        };
+      }
+    );
 
     const createExtendSchemaSpy = sinon.spy(PluginFactory, 'createExtendSchemaPlugin');
     const createWrapResolverSpy = sinon.spy(PluginFactory, 'createWrapResolverPlugin');
@@ -31,7 +32,7 @@ describe('PostGraphileModule', () => {
     const createAddInflectorsSpy = sinon.spy(PluginFactory, 'createAddInflectorsPlugin');
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [PostGraphileModule.forRoot({ pgConfig: '', appendPlugins: [{ test: 'test' } as any ] })],
+      imports: [PostGraphileModule.forRoot({ pgConfig: '', appendPlugins: [{ test: 'test' } as any] })],
       providers: [TestPlugin, Test2Plugin],
     }).compile();
 
@@ -55,5 +56,28 @@ describe('PostGraphileModule', () => {
 
     expect.assertions(1);
     await expect(app.init()).rejects.toBeTruthy();
+  });
+
+  it('should call the async provider on forRootAsync', async () => {
+    sinon.stub(PostGraphileModule.prototype as any, 'createPostGraphql').returns(() => {
+      /* */
+    });
+    const asyncProvider = sinon.spy(PostGraphileModule, <any>'createAsyncProviders');
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        PostGraphileModule.forRootAsync({
+          imports: [],
+          inject: [],
+          useFactory: () => {
+            return { pgConfig: '' };
+          },
+        }),
+      ],
+    }).compile();
+
+    const app = moduleFixture.createNestApplication();
+
+    await app.init();
+    expect(asyncProvider.callCount).toBe(1);
   });
 });
