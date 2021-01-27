@@ -1,4 +1,9 @@
+export interface ResolverWrapperRequirementsColumns {
+  column: string;
+  alias: string;
+}
+
 export interface ResolverWrapperRequirements {
-  childColumns?: Array<{ column: string; alias: string }>;
-  siblingColumns?: Array<{ column: string; alias: string }>;
+  childColumns?: ResolverWrapperRequirementsColumns[];
+  siblingColumns?: ResolverWrapperRequirementsColumns[];
 }
