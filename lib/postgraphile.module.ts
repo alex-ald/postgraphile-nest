@@ -12,7 +12,7 @@ import { SchemaTypeExplorerService } from './services/schema-type-explorer.servi
   providers: [MetadataScanner, PluginExplorerService, SchemaTypeExplorerService],
 })
 export class PostGraphileModule implements OnModuleInit {
-
+  private static readonly instances: PostGraphileModule[] = [];
   postgraphile: HttpRequestHandler;
 
   constructor(
@@ -20,7 +20,9 @@ export class PostGraphileModule implements OnModuleInit {
       private readonly pluginExplorerService: PluginExplorerService,
       private readonly schemaTypeExplorerService: SchemaTypeExplorerService,
       @Inject(POSTGRAPHILE_MODULE_OPTIONS) private readonly options: PGraphileModuleOptions,
-  ) {}
+  ) {
+    PostGraphileModule.instances.push(this);
+  }
 
   static forRoot(options: PGraphileModuleOptions): DynamicModule {
     return {
@@ -42,6 +44,10 @@ export class PostGraphileModule implements OnModuleInit {
         ...this.createAsyncProviders(options),
       ],
     };
+  }
+
+  static get Postgraphile(): HttpRequestHandler | undefined {
+    return PostGraphileModule.instances[0]?.postgraphile;
   }
 
   private static createAsyncProviders(
@@ -90,7 +96,7 @@ export class PostGraphileModule implements OnModuleInit {
     const app = httpAdapter.getInstance();
 
     // Break out PostGraphile options
-    const {pgConfig, schema, playground, ...postGraphileOptions} = this.options;
+    const {pgConfig, schema, playground, useAsMiddleware = true, ...postGraphileOptions} = this.options;
 
     const { appendPlugins = [] } = postGraphileOptions;
 
@@ -105,7 +111,9 @@ export class PostGraphileModule implements OnModuleInit {
 
     this.postgraphile = this.createPostGraphql(pgConfig, schema, updatedPostGraphileOptions);
 
-    app.use(this.postgraphile);
+    if (useAsMiddleware) {
+      app.use(this.postgraphile);
+    }
 
     const graphqlRoute = this.options.graphqlRoute ||  '/graphql';
     const playgroundRoute = this.options.playgroundRoute || '/playground';
