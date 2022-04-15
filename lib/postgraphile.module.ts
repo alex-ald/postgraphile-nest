@@ -12,6 +12,7 @@ import { SchemaTypeExplorerService } from './services/schema-type-explorer.servi
   providers: [MetadataScanner, PluginExplorerService, SchemaTypeExplorerService],
 })
 export class PostGraphileModule implements OnModuleInit {
+
   private static readonly instances: PostGraphileModule[] = [];
   postgraphile: HttpRequestHandler;
 
