@@ -8,6 +8,7 @@ export interface PGraphileModuleOptions extends PostGraphileOptions {
     schema?: string | string[];
     playground?: boolean;
     playgroundRoute?: string;
+    useAsMiddleware?: boolean;
 }
 
 export interface PGraphileOptionsFactory {
