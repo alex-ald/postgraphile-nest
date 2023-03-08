@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "^7.6.6",
-    "@nestjs/core": "^7.6.6",
+    "@nestjs/core": "^9.0.5",
     "@nestjs/platform-express": "^7.6.6",
     "@nestjs/testing": "^7.6.6",
     "@types/express": "^4.17.11",
@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^7.6.6",
-    "@nestjs/core": "^7.6.6",
+    "@nestjs/core": "^9.0.5",
     "postgraphile": "^4.10.0",
     "reflect-metadata": "^0.1.13"
   },
