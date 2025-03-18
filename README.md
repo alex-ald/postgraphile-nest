@@ -4,7 +4,9 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
 
-# PostGraphile for Nestjs
+# [DEPRECATED] PostGraphile for Nestjs
+
+This is no longer supported.
 
 [![Build Status](https://travis-ci.com/alex-ald/postgraphile-nest.svg?branch=master)](https://travis-ci.com/alex-ald/postgraphile-nest)
 [![Coverage Status](https://coveralls.io/repos/github/alex-ald/postgraphile-nest/badge.svg)](https://coveralls.io/github/alex-ald/postgraphile-nest)
